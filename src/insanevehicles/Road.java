@@ -1,6 +1,10 @@
 package insanevehicles;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Random;
+import java.util.Scanner;
 
 import insanevehicles.element.Element;
 import insanevehicles.element.mobile.MyVehicle;
@@ -13,6 +17,7 @@ public class Road {
 	MyVehicle vehicle;
 	Element[][] road;
 
+	// Premier constructeur
 	public Road(int width, int height, int quota, int view, MyVehicle vehicle) {
 		setWidth(width);
 		setHeight(height);
@@ -26,6 +31,20 @@ public class Road {
 		road = new Element[getWigth()][getHeight()];
 
 		fillOnTheRoad();
+	}
+
+	// Second contructeur (lit le fichier)
+	public Road(File map) throws FileNotFoundException {
+		ArrayList<String> lineOfMap = new ArrayList<String>();
+		Scanner sc = new Scanner(map);
+
+		while (sc.hasNextLine()) {
+			lineOfMap.add(sc.nextLine());
+		}
+
+		sc.close();
+
+		fillOnTheRoad(lineOfMap);
 	}
 
 	public void show(int yStart) {
@@ -59,6 +78,13 @@ public class Road {
 		}
 
 		setOnTheRoadXY(getVehicle(), getVehicle().getX(), getVehicle().getY());
+	}
+
+	private void fillOnTheRoad(ArrayList<String> lineOfMap) {
+		int x, y;
+
+		Random rand = new Random();
+
 	}
 
 	public int getWigth() {
