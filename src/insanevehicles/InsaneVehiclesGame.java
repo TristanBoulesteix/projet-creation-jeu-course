@@ -1,7 +1,6 @@
 package insanevehicles;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import insanevehicles.element.Element;
 import insanevehicles.element.mobile.MyVehicle;
@@ -18,10 +17,10 @@ public class InsaneVehiclesGame {
 	private Road road;
 	private MyVehicle vehicle;
 
-	public InsaneVehiclesGame() throws FileNotFoundException {
+	public InsaneVehiclesGame() throws IOException {
 		setVehicle(new MyVehicle());
 		// setRoad(new Road(ROAD_WIDTH, ROAD_HEIGHT, ROAD_QUOTA, ROAD_VIEW, vehicle));
-		setRoad(new Road(new File(pathName)));
+		setRoad(new Road(pathName, ROAD_QUOTA, ROAD_VIEW, vehicle));
 	}
 
 	public void play() throws InterruptedException {
@@ -33,7 +32,6 @@ public class InsaneVehiclesGame {
 		}
 
 		System.out.print("\nCRASH\n");
-
 	}
 
 	public Road getRoad() {

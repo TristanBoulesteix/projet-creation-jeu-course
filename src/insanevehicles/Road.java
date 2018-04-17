@@ -1,16 +1,18 @@
 package insanevehicles;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.Scanner;
 
 import insanevehicles.element.Element;
 import insanevehicles.element.mobile.MyVehicle;
+import insanevehicles.element.motionless.Bend;
 import insanevehicles.element.motionless.Ditch;
 import insanevehicles.element.motionless.Macadam;
 import insanevehicles.element.motionless.Obstacle;
+import insanevehicles.element.motionless.Out;
 
 public class Road {
 	int width, height, view, quota;
@@ -34,15 +36,33 @@ public class Road {
 	}
 
 	// Second contructeur (lit le fichier)
-	public Road(File map) throws FileNotFoundException {
-		ArrayList<String> lineOfMap = new ArrayList<String>();
-		Scanner sc = new Scanner(map);
+	public Road(String path, int quota, int view, MyVehicle vehicle) throws IOException {
+		setQuota(quota);
+		setView(view);
+		setVehicle(vehicle);
 
-		while (sc.hasNextLine()) {
-			lineOfMap.add(sc.nextLine());
+		getVehicle().setX(getWigth() / 2);
+		getVehicle().setY(0);
+
+		ArrayList<String> lineOfMap = new ArrayList<String>();
+		String tempString;
+
+		FileReader reader = new FileReader(path);
+		BufferedReader buffer = new BufferedReader(reader);
+
+		while ((tempString = buffer.readLine()) != null) {
+			lineOfMap.add(tempString);
 		}
 
-		sc.close();
+		buffer.close();
+
+		setWidth(Integer.parseInt(lineOfMap.get(0)));
+		lineOfMap.remove(0);
+
+		setHeight(Integer.parseInt(lineOfMap.get(0)));
+		lineOfMap.remove(0);
+
+		road = new Element[getWigth()][getHeight()];
 
 		fillOnTheRoad(lineOfMap);
 	}
@@ -60,6 +80,7 @@ public class Road {
 		}
 	}
 
+	// Remplissage de la route
 	private void fillOnTheRoad() {
 		int x, y;
 
@@ -80,10 +101,50 @@ public class Road {
 		setOnTheRoadXY(getVehicle(), getVehicle().getX(), getVehicle().getY());
 	}
 
+	// Remplissage de la route à partir du fichier
 	private void fillOnTheRoad(ArrayList<String> lineOfMap) {
 		int x, y;
+		String tempString;
+		char currentChar;
 
-		Random rand = new Random();
+		for (y = 0; y < getHeight(); y++) {
+			tempString = lineOfMap.get(y);
+
+			for (x = 0; x < getWigth(); x++) {
+				currentChar = tempString.charAt(x);
+
+				switch (currentChar) {
+				case Element.ROAD_DITCH:
+					setOnTheRoadXY(new Ditch(), x, y);
+					break;
+
+				case Element.ROAD_MACADAM:
+					setOnTheRoadXY(new Macadam(), x, y);
+					break;
+
+				case Element.ROAD_OBSTACLE:
+					setOnTheRoadXY(new Obstacle(), x, y);
+					break;
+
+				case Element.ROAD_OUT:
+					setOnTheRoadXY(new Out(), x, y);
+
+				case '/':
+					setOnTheRoadXY(new Bend(currentChar), x, y);
+					break;
+
+				case '\\':
+					setOnTheRoadXY(new Bend(currentChar), x, y);
+					break;
+
+				default:
+					setOnTheRoadXY(new Macadam(), x, y);
+					break;
+				}
+			}
+		}
+
+		// setOnTheRoadXY(getVehicle(), getVehicle().getX(), getVehicle().getY());
 
 	}
 
